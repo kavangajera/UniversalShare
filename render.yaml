@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: universalshare
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: RENDER
+        value: "true"
+      - key: UPLOAD_DIR
+        value: "/tmp/uploads"
+      - key: MAX_FILE_SIZE_MB
+        value: "500"

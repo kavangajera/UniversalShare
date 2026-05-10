@@ -1,4 +1,30 @@
-shareENV
-certs
-uploads
-__pycache__
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+.venv/
+venv/
+shareENV/
+
+# Environment
+.env
+
+# Uploads (user files, not tracked)
+uploads/
+
+# SSL certificates (sensitive)
+certs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

@@ -139,10 +139,21 @@ Troubleshooting
 - Certificate warnings on Android
   - Use mkcert for trusted local certs, or install your self‑signed cert/CA as trusted
 
-- Can’t reach the server from phone
+- Can't reach the server from phone
   - Make sure phone and computer are on the same network
-  - Use the computer’s LAN IP (e.g., 192.168.x.x), not `localhost`
+  - Use the computer's LAN IP (e.g., 192.168.x.x), not `localhost`
   - Check firewall settings on Mac/Windows
+
+- Server discovery not finding other devices (Windows/Mac)
+  - **Windows Firewall**: Allow port 8000 (TCP) for Python/FastAPI
+    - Windows: Windows Security > Firewall > Advanced settings > Inbound Rules > New Rule > Port > TCP 8000 > Allow
+    - Or temporarily disable firewall to test
+  - **Windows server not running**: Ensure `python app.py` is running on Windows laptop
+  - **Different subnet**: Make sure both devices are on the same Wi‑Fi/hotspot (same subnet)
+  - **Manual refresh**: Click the 🔄 button (top-right) to manually trigger discovery
+  - **Check console**: Open browser DevTools (F12) and look for `[Discovery]` logs to see scan progress
+  - **Verify Windows IP**: On Windows, run `ipconfig` and note the IPv4 address; ensure it's in the same subnet as Mac
+  - **CORS**: Server already has CORS enabled, but if issues persist, check browser console for CORS errors
 
 Project Structure
 ```

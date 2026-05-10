@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Share / QR Code Panel -->
+    <div class="share-panel" id="sharePanel">
+        <button class="share-toggle-btn" id="shareToggleBtn" title="Share this page">
+            <span class="share-icon">📡</span>
+            <span class="share-text">Share</span>
+        </button>
+        <div class="share-dropdown" id="shareDropdown" style="display: none;">
+            <div class="share-qr" id="shareQR"></div>
+            <p class="share-url-label">Scan QR or share this link:</p>
+            <div class="share-url-row">
+                <input type="text" class="share-url-input" id="shareUrlInput" readonly>
+                <button class="copy-btn" id="copyUrlBtn" title="Copy URL">📋</button>
+            </div>
+            <p class="share-hint">Anyone on the same WiFi can access this page</p>
+        </div>
+    </div>
+
+    <!-- Shake detection control -->
+    <div class="shake-detector" id="shakeDetector">
+        <div class="shake-indicator"></div>
+        <span class="shake-status-text" id="shakeStatusText">Shake to upload</span>
+        <button class="shake-toggle-btn-small" id="shakeToggleBtn" title="Enable shake detection">📳</button>
+        <button class="shake-toggle-btn-small" id="testShakeBtn" title="Test shake (desktop only)" style="display: none; margin-left: 8px;">🧪</button>
+    </div>
+
+    <!-- Server discovery status -->
+    <div class="discovery-panel" id="discoveryStatus" style="display: none;">
+        <div class="discovery-header">
+            <div class="shake-indicator" id="discoveryIndicator"></div>
+            <span class="shake-status-text" id="discoveryStatusText">Discovering servers...</span>
+            <button class="shake-toggle-btn-small" id="refreshDiscoveryBtn" title="Refresh discovery">🔄</button>
+        </div>
+        <div id="manualIPEntry" style="display: none;" class="manual-ip-row">
+            <input type="text" id="manualIPInput" placeholder="Enter IP (e.g., 192.168.1.XX)"
+                   class="manual-ip-input">
+            <button class="shake-toggle-btn-small" id="addManualIPBtn" title="Add IP">➕</button>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <div class="logo-text">UniversalShare</div>
+        </div>
+        <h1>Share Files Instantly</h1>
+        <p class="subtitle">Upload, preview, and share files across any device — no app needed</p>
+    </header>
+
+    <div class="upload-zone" id="uploadZone">
+        <div class="upload-icon">📤</div>
+        <h2>Drop files here or click to upload</h2>
+        <p>Supports all file types • Streams large files efficiently</p>
+        <button class="upload-btn">Choose Files</button>
+        <input type="file" id="fileInput" multiple>
+    </div>
+
+    <div id="uploadProgress" class="upload-progress" style="display: none;"></div>
+
+    <div class="preview-section" id="previewSection" style="display: none;">
+        <h2 class="section-title">Selected Files</h2>
+        <div class="file-grid" id="fileGrid"></div>
+        <button class="upload-btn" id="uploadAllBtn" style="width: 100%; margin-top: 16px;">Upload All Files</button>
+        <button class="upload-btn clear-btn" id="clearAllBtn" style="width: 100%; margin-top: 8px;">Clear All</button>
+    </div>
+
+    <div class="uploaded-files" id="uploadedFiles" style="display: none;">
+        <h2 class="section-title">Uploaded Files</h2>
+        <ul class="file-list" id="fileList"></ul>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+        <div class="empty-state-icon">📁</div>
+        <p>No files uploaded yet. Start by uploading some files!</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/app.js"></script>
+<script src="/static/js/upload.js"></script>
+<script src="/static/js/discovery.js"></script>
+<script src="/static/js/shake.js"></script>
+{% endblock %}
