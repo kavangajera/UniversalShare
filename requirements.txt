@@ -44,3 +44,5 @@ typing-inspection==0.4.2
     #   pydantic
 uvicorn==0.46.0
     # via universalshare (pyproject.toml)
+websockets==16.0
+    # via universalshare (pyproject.toml)

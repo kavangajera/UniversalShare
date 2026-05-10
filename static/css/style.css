@@ -620,6 +620,111 @@ h1 {
     font-size: 0.95rem;
 }
 
+/* --- P2P Nearby Devices --- */
+.peer-section {
+    background: var(--surface);
+    border: 1px solid var(--surface-light);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    margin-bottom: 24px;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.peer-hint {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+}
+
+.peer-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    font-size: 0.72rem;
+    font-weight: 800;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    margin-left: 6px;
+}
+
+.peer-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.peer-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: var(--background);
+    border: 1px solid var(--surface-light);
+    border-radius: 12px;
+    transition: var(--transition);
+    animation: slideIn 0.3s ease-out;
+}
+
+.peer-item:hover {
+    border-color: var(--primary);
+    background: linear-gradient(135deg, var(--background), rgba(0, 212, 255, 0.04));
+    transform: translateX(4px);
+}
+
+.peer-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.peer-avatar {
+    font-size: 1.5rem;
+    min-width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    border-radius: 10px;
+}
+
+.peer-name {
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+
+.peer-status {
+    font-size: 0.75rem;
+    color: var(--success);
+    font-weight: 500;
+}
+
+.peer-send-btn {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+
+.peer-send-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px var(--primary-glow);
+}
+
+.peer-send-btn:active {
+    transform: translateY(0);
+}
+
 /* --- Shake Detector / Discovery Panels --- */
 .shake-detector {
     position: fixed;

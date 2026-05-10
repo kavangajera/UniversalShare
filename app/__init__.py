@@ -32,6 +32,15 @@ def create_app() -> FastAPI:
     # Ensure upload directory exists
     settings.UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
+    # Register route modules FIRST (before static mounts which are catch-all)
+    from app.routes import pages, upload, download, files, discovery, signaling
+    application.include_router(signaling.router)  # WebSocket — must be before static mounts
+    application.include_router(upload.router)
+    application.include_router(download.router)
+    application.include_router(files.router)
+    application.include_router(discovery.router)
+    application.include_router(pages.router)
+
     # Mount static files (CSS, JS, images)
     static_dir = Path(__file__).parent.parent / "static"
     static_dir.mkdir(parents=True, exist_ok=True)
@@ -43,13 +52,5 @@ def create_app() -> FastAPI:
         StaticFiles(directory=str(settings.UPLOAD_DIR)),
         name="uploads",
     )
-
-    # Register route modules
-    from app.routes import pages, upload, download, files, discovery
-    application.include_router(pages.router)
-    application.include_router(upload.router)
-    application.include_router(download.router)
-    application.include_router(files.router)
-    application.include_router(discovery.router)
 
     return application
