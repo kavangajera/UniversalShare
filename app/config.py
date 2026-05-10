@@ -25,7 +25,7 @@ class Settings:
         self.PORT = int(os.environ.get("PORT", 8000))
 
         # File limits
-        self.MAX_FILE_SIZE_MB = int(os.environ.get("MAX_FILE_SIZE_MB", "500"))
+        self.MAX_FILE_SIZE_MB = int(os.environ.get("MAX_FILE_SIZE_MB", "5000"))
         self.MAX_FILE_SIZE_BYTES = self.MAX_FILE_SIZE_MB * 1024 * 1024
 
         # Chunk size for streaming file I/O (1MB)

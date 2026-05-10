@@ -10,4 +10,4 @@ services:
       - key: UPLOAD_DIR
         value: "/tmp/uploads"
       - key: MAX_FILE_SIZE_MB
-        value: "500"
+        value: "5000"

@@ -8,10 +8,9 @@ let ws = null;
 let myPeerId = null;
 let myPeerName = null;
 let peers = {};           // {peerId: {name, connection, dataChannel}}
-let incomingFiles = {};   // Track incoming file transfers
-let outgoingTransfers = {}; // Track outgoing transfers
-
-const CHUNK_SIZE = 64 * 1024; // 64KB chunks for WebRTC DataChannel
+const CHUNK_SIZE = 64 * 1024; // 64KB chunks — safest size for all browsers without fragmentation overhead
+const BUFFER_HIGH = 1024 * 1024;       // 1MB — pause sending when buffer exceeds this to prevent queue saturation
+const BUFFER_LOW  = 256 * 1024;        // 256KB — resume sending when buffer drains to this
 const WS_RECONNECT_DELAY = 2000;
 
 // --- ICE Configuration (works on LAN without internet) ---
@@ -58,6 +57,11 @@ function tryConnect(protocols, host, index) {
 
     ws.onmessage = (event) => {
         const message = JSON.parse(event.data);
+        // Respond to server heartbeat pings
+        if (message.type === 'ping') {
+            ws.send(JSON.stringify({ type: 'pong' }));
+            return;
+        }
         handleSignalingMessage(message);
     };
 
@@ -218,6 +222,8 @@ async function sendFilesToPeer(peerId) {
     const pc = createPeerConnection(peerId);
     const channel = pc.createDataChannel('fileTransfer', {
         ordered: true,
+        // Max throughput: large buffer
+        bufferedAmountLowThreshold: BUFFER_LOW,
     });
 
     peer.dataChannel = channel;
@@ -263,35 +269,52 @@ async function sendFilesOverChannel(peerId, channel, files) {
             total: files.length,
         }));
 
-        // Read and send file in chunks
+        // Read and send file in chunks — optimized for speed
         const reader = file.stream().getReader();
         let sent = 0;
+        let lastProgressUpdate = 0;
 
-        // Show progress
+        // Event-driven backpressure: resolve a promise when buffer drains
+        function waitForBufferDrain() {
+            return new Promise(resolve => {
+                if (channel.bufferedAmount <= BUFFER_LOW) {
+                    resolve();
+                    return;
+                }
+                // Use the onbufferedamountlow event (zero-delay, no polling)
+                channel.onbufferedamountlow = () => {
+                    channel.onbufferedamountlow = null;
+                    resolve();
+                };
+            });
+        }
+
         showP2PProgress(file.name, 0, file.size, 'sending', peerName);
 
         while (true) {
             const { done, value } = await reader.read();
             if (done) break;
 
-            // Split into smaller chunks if needed (DataChannel has buffer limits)
+            // Send the stream chunk directly or split if > CHUNK_SIZE
             let offset = 0;
             while (offset < value.byteLength) {
-                // Wait for buffer to drain if needed
-                while (channel.bufferedAmount > 16 * 1024 * 1024) {
-                    await new Promise(r => setTimeout(r, 50));
+                // Backpressure: wait for buffer to drain (event-driven, no polling)
+                if (channel.bufferedAmount > BUFFER_HIGH) {
+                    await waitForBufferDrain();
                 }
 
                 const end = Math.min(offset + CHUNK_SIZE, value.byteLength);
-                const chunk = value.slice(offset, end);
-                channel.send(chunk);
+                // Use subarray (view) instead of slice (copy) to eliminate GC overhead
+                channel.send(value.subarray(offset, end));
+                sent += (end - offset);
                 offset = end;
-                sent += (end - (offset - (end - offset)));
             }
-            sent = Math.min(sent, file.size);
 
-            // Update progress
-            showP2PProgress(file.name, sent, file.size, 'sending', peerName);
+            // Throttle progress UI updates to every 500KB (avoid DOM thrashing)
+            if (sent - lastProgressUpdate > 512 * 1024) {
+                showP2PProgress(file.name, Math.min(sent, file.size), file.size, 'sending', peerName);
+                lastProgressUpdate = sent;
+            }
         }
 
         // Send end marker
